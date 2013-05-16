@@ -1,0 +1,41 @@
+package main
+
+import (
+    "github.com/gorilla/mux"
+    "crudapi"
+    "log"
+    "net/http"
+)
+
+const HOST_NAME = "localhost"
+const API_PREFIX = "/v1"
+const PORT_NUM = ":9999"
+
+func hello(resp http.ResponseWriter, req *http.Request) {
+    resp.Write([]byte("Hello there!"))
+}
+
+func main() {
+    // storage
+    s := crudapi.NewMapStorage()
+    s.AddMap("artists")
+    s.AddMap("albums")
+
+    // router
+    r := mux.NewRouter()
+
+    // mounting the API
+    crudapi.MountAPI(r.Host(HOST_NAME).PathPrefix(API_PREFIX).Subrouter(), s)
+
+    // custom handler
+    r.HandleFunc("/", hello)
+
+    // start listening
+    log.Println("server listening on " + HOST_NAME + PORT_NUM)
+    log.Println("API on " + HOST_NAME + PORT_NUM + API_PREFIX)
+
+    err := http.ListenAndServe(PORT_NUM, r)
+    if err != nil {
+        log.Println(err)
+    }
+}

@@ -17,15 +17,17 @@ func hello(resp http.ResponseWriter, req *http.Request) {
 
 func main() {
     // storage
-    s := crudapi.NewMapStorage()
-    s.AddMap("artists")
-    s.AddMap("albums")
+    store := crudapi.NewMapStorage()
+    store.AddMap("artists")
+    store.AddMap("albums")
+
+    api := crudapi.NewNoAuthApiMethods(store)
 
     // router
     r := mux.NewRouter()
 
     // mounting the API
-    crudapi.MountAPI(r.Host(HOST_NAME).PathPrefix(API_PREFIX).Subrouter(), s)
+    crudapi.MountAPI(r.Host(HOST_NAME).PathPrefix(API_PREFIX).Subrouter(), api)
 
     // custom handler
     r.HandleFunc("/", hello)

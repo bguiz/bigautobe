@@ -9,7 +9,7 @@ import (
 
 const HOST_NAME = "localhost"
 const API_PREFIX = "/v1"
-const PORT_NUM = ":9999"
+const PORT_NUM = ":8080"
 
 func hello(resp http.ResponseWriter, req *http.Request) {
     resp.Write([]byte("Hello there!"))
@@ -21,13 +21,13 @@ func main() {
     store.AddMap("artists")
     store.AddMap("albums")
 
-    api := crudapi.NewNoAuthApiMethods(store)
+    //api := crudapi.NewNoAuthApiMethods(store)
 
     // router
     r := mux.NewRouter()
 
     // mounting the API
-    crudapi.MountAPI(r.Host(HOST_NAME).PathPrefix(API_PREFIX).Subrouter(), api)
+    crudapi.MountAPI(r.Host(HOST_NAME).PathPrefix(API_PREFIX).Subrouter(), store)
 
     // custom handler
     r.HandleFunc("/", hello)
